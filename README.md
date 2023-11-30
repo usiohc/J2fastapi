@@ -55,3 +55,97 @@ FastAPI로 만든 백엔드 서버에 데이터를 요청하고 응답을 받아
 - Svelte로 작성한 코드를 실시간으로 테스트 해 보려면 Svelte로 작성한 코드를 브라우저가 인식할 수 있는 HTML, CSS, Javascript로 실시간 변환하는 기능이 필요
 - Svelte로 작성한 코드를 빌드하면 순수 HTML과 CSS, Javascript가 만들어지므로 FastAPI 서버에 정적 파일 형태로 배포하면 됨
 - 즉, 운영단계에서는 Node.js 서버가 필요없다.
+
+<br>
+
+## 프로젝트 구조
+
+    ├── main.py
+    ├── database.py
+    ├── models.py
+    ├── domain
+    │   ├── answer
+    │   ├── question
+    │   └── user
+    └── frontend
+
+#### main.py
+- app 객체를 통해 FastAPI의 설정을 함
+    - 그렇다면 main.py는 FastAPI 프로젝트의 환경 설정을 하는 곳
+
+#### database.py
+- DB 관련 환경설정
+
+#### models.py
+- ORM을 사용하기 위해 SQLAlchemy를 사용, 모델 기반으로 DB 처리
+- 모델 클래스를 정의
+
+#### domain
+- 해당 프로젝트는 질문과 답변을 작성하는 게시판을 만드는 것이 목적
+    - 질문, 답변, 사용자 라는 3개의 도메인을 두어 관련한 파일을 작성
+
+
+> - 질문 (question)
+> - 답변 (answer)
+> - 사용자 (user)
+
+#### -> 각 도메인의 API를 생성 관리 하기위해서 다음과 같은 파일이 필요
+
+- 라우트 파일 - URL과 API의 전체적인 동작을 관리
+- 데이터베이스 처리 파일 - 데이터의 생성, 조회, 수정, 삭제 (CRUD) 를 처리
+- 입출력 관리 파일 - 입력 데이터와 출력 데이터의 스펙 정의 및 검증
+
+> - question_router.py - 라우터 파일
+> - question_crud.py - 데이터베이스 처리 파일
+> - question_schema.py - 입출력 관리 파일
+
+
+#### frontend
+- Svelte의 소스 및 빌드 파일들을 저장할 프론트엔드의 루트 디렉터리
+- 최종적으로 frontend/dist 디렉터리에 생성된 빌드파일들을 배포시에 사용
+
+
+<br>
+
+
+### alembic
+
+모델을 이용해 테이블 자동으로 생성
+
+#### 초기화
+```bash
+alembic init migrations
+```
+
+- myapi 디렉터리 하위에 migrations라는 디렉터리와 alembic.ini 파일이 생성
+-  migrations 디렉터리는 alembic 도구를 사용할 때 생성되는 리비전 파일들을 저장하는 용도로 사용
+- alembic.ini 파일은 alembic의 환경설정 파일
+
+
+#### 리비전 파일 생성
+```bash
+alembic revision --autogenerate
+```
+
+
+#### 리비전 파일 실행
+```bash
+alembic upgrade head
+```
+
+<br>
+
+##### alembic 없이 테이블 생성하기
+    main.py 파일에 다음의 문장을 삽입하면 FastAPI 실행시 테이블들이 모두 생성된다.
+
+```python
+import models
+from database import engine
+models.Base.metadata.create_all(bind=engine)
+```
+
+    매우 간단한 방법이지만 데이터베이스에 테이블이 존재하지 않을 경우에만 테이블을 생성
+    한번 생성된 테이블에 대한 변경 관리를 할 수는 없음
+    이러한 이유로 이 책에서는 이 방법을 사용하지 않고 alembic을 사용하여 데이터베이스를 관리
+
+    
