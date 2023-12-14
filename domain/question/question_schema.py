@@ -18,6 +18,11 @@ class Question(BaseModel):
         from_attributes = True
 
 
+class QuestionList(BaseModel):
+    total: int = 0
+    question_list: list[Question] = []
+
+
 class QuestionCreate(BaseModel):
     subject: str
     content: str
