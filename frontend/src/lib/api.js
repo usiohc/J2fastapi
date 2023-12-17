@@ -4,7 +4,7 @@ const fastapi = (operation, url, params, success_callback, failure_callback) => 
     let body = JSON.stringify(params)
     let _url = import.meta.env.VITE_SERVER_URL+url
 
-    if(method == 'get') {
+    if(method === 'get') {
         _url += "?" + new URLSearchParams(params)
     }
 
