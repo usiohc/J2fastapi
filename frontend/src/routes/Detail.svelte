@@ -2,6 +2,7 @@
     import fastapi from "../lib/api"
     import Error from "../components/Error.svelte"
     import { push } from 'svelte-spa-router'
+    import { is_login } from "../lib/store"
     import moment from 'moment/min/moment-with-locales'
     moment.locale('ko')
 
