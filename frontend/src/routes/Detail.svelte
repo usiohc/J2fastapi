@@ -66,8 +66,9 @@
         <div class="card-body">
             <div class="card-text" style="white-space: pre-line;">{answer.content}</div>
             <div class="d-flex justify-content-end">
-                <div class="badge bg-light text-dark p-2">
-                    {moment(answer.create_date).format("YYYY년 MM월 DD일 hh:mm a")}
+                <div class="badge bg-light text-dark p-2 text-start">
+                    <div class="mb-2">{ answer.user ? answer.user.username : ""}</div>
+                    <div>{moment(answer.create_date).format("YYYY년 MM월 DD일 hh:mm a")}</div>
                 </div>
             </div>
         </div>
@@ -77,8 +78,8 @@
     <Error error={error} />
     <form method="post" class="my-3">
         <div class="mb-3">
-            <textarea rows="10" bind:value={content} class="form-control" />
+            <textarea bind:value={content} class="form-control" disabled={$is_login ? "" : "disabled"} rows="10" />
         </div>
-        <input type="submit" value="답변등록" class="btn btn-primary" on:click="{post_answer}" />
+        <input class="btn btn-primary {$is_login ? '' : 'disabled'}" on:click="{post_answer}" type="submit" value="답변등록" />
     </form>
 </div>
